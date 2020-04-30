@@ -13,8 +13,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 @socketio.on('chat', namespace='/chat_room')
 def handle_message2(msg_package):
-    print('message:', msg_package)
-    print('-------SID------', request.args)
     user_id = msg_package.get('user_id', None)
     room = msg_package.get('room', None)
     message = msg_package.get('message', None)
