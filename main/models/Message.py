@@ -7,8 +7,16 @@ from hashlib import md5
 
 class Message(BaseModel):
     __tablename__ = 'messages'
-    owner_id = db.Column('owner_id', db.Integer, db.ForeignKey('users.id'))
-    conversation_id = db.Column('conversation_id', db.Integer, db.ForeignKey('conversations.id'))
-    public_id = db.Column('public_id', db.String(50), nullable=False, unique=True)
+    owner_id = db.Column('owner_id', db.String(50), db.ForeignKey('users.public_id'))
+    conversation_id = db.Column('conversation_id', db.String(50), db.ForeignKey('conversations.public_id'))
+
     content = db.Column('content', db.String(2000), nullable=False)
     conversation = db.relationship('Conversation', backref=db.backref('messages', lazy='dynamic'), lazy=True)
+
+    def __init__(self, owner_id, conversation_id, content, **kwargs):
+        self.owner_id = owner_id
+        self.conversation_id = conversation_id
+        self.content = content
+        self.public_id = self.gen_public_id()
+
+    public_keys = ['']

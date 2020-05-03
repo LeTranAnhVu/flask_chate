@@ -10,14 +10,17 @@ class User(BaseModel):
     username = db.Column('username', db.String(200), nullable=False, unique=True)
     password = db.Column('password', db.Text, nullable=False)
     display_name = db.Column('display_name', db.String(500), nullable=False)
-    public_id = db.Column('public_id', db.String(50), nullable=False, unique=True)
     logined_at = db.Column('logined_at', db.DateTime)
+
+    fillable_keys = ['username', 'password', 'display_name', 'logined_at', 'created_at', 'updated_at']
+
+    public_keys = ['public_id', 'display_name', 'username', 'logined_at', 'created_at', 'updated_at']
 
     def __init__(self, display_name, username, password, **kwargs):
         self.username = username
         self.display_name = display_name
         self.password = bcrypt.generate_password_hash(password)
-        self.public_id = md5(username.encode('utf8')).hexdigest()
+        self.public_id = self.gen_public_id(username)
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
@@ -27,7 +30,7 @@ class User(BaseModel):
         friends = Friend.query.filter(or_(Friend.user1_id == own_id, Friend.user2_id == own_id)).all()
         friend_ids = []
         for friend_row in friends:
-            friend_id =friend_row.user1_id if friend_row.user1_id != own_id else friend_row.user2_id
+            friend_id = friend_row.user1_id if friend_row.user1_id != own_id else friend_row.user2_id
             friend_ids.append(friend_id)
         if len(friend_ids) > 0:
             return User.query.filter(User.id.in_(friend_ids)).all()

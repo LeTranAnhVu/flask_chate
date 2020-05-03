@@ -5,8 +5,8 @@ from sqlalchemy import or_, and_
 
 class Friend(BaseModel):
     __tablename__ = 'friends'
-    user1_id = db.Column('user1_id', db.Integer, db.ForeignKey('users.id'))
-    user2_id = db.Column('user2_id', db.Integer, db.ForeignKey('users.id'))
+    user1_id = db.Column('user1_id', db.String(50), db.ForeignKey('users.public_id'))
+    user2_id = db.Column('user2_id', db.String(50), db.ForeignKey('users.public_id'))
 
     @staticmethod
     def is_existed(user1_id, user2_id):

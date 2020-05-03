@@ -1,17 +1,27 @@
 from main import db
 from datetime import datetime
-
-
+import random
+from hashlib import md5
 from main.helpers.common import without_items
 
 
 class BaseModel(db.Model):
     __abstract__ = True
-    id = db.Column('id', db.Integer, primary_key=True)
+    id = db.Column('id', db.Integer, autoincrement=True, primary_key=True)
+    public_id = db.Column('public_id', db.String(50), primary_key=True, nullable=False, unique=True)
     created_at = db.Column('created_at', db.DateTime, default=datetime.utcnow())
     updated_at = db.Column('updated_at', db.DateTime, onupdate=datetime.utcnow())
 
     public_keys = []
+
+    def gen_public_id(self, unique_str=None):
+        if unique_str:
+            return md5(unique_str.encode('utf8')).hexdigest()
+        else:
+            pre = str(datetime.utcnow().timestamp() * 1000000)
+            post = str(random.randint(1, 1000000))
+            rd = pre + post
+            return md5(rd.encode('utf8')).hexdigest()
 
     def to_json(self, except_keys=None, parent_models=None, extra_keys=None):
         d = dict()
@@ -33,4 +43,3 @@ class BaseModel(db.Model):
             else:
                 pass
         return d
-
