@@ -14,9 +14,9 @@ class Message(BaseModel):
     conversation = db.relationship('Conversation', backref=db.backref('messages', lazy='dynamic'), lazy=True)
 
     def __init__(self, owner_id, conversation_id, content, **kwargs):
+        super().__init__(unique_str=None)
         self.owner_id = owner_id
         self.conversation_id = conversation_id
         self.content = content
-        self.public_id = self.gen_public_id()
 
     public_keys = ['']

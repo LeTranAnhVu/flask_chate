@@ -14,7 +14,11 @@ class BaseModel(db.Model):
 
     public_keys = []
 
-    def gen_public_id(self, unique_str=None):
+    def __init__(self, unique_str=None):
+        self.public_id = self.gen_public_id(unique_str)
+
+    @staticmethod
+    def gen_public_id(unique_str=None):
         if unique_str:
             return md5(unique_str.encode('utf8')).hexdigest()
         else:

@@ -17,10 +17,10 @@ class User(BaseModel):
     public_keys = ['public_id', 'display_name', 'username', 'logined_at', 'created_at', 'updated_at']
 
     def __init__(self, display_name, username, password, **kwargs):
+        super().__init__(unique_str=username)
         self.username = username
         self.display_name = display_name
         self.password = bcrypt.generate_password_hash(password)
-        self.public_id = self.gen_public_id(username)
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
